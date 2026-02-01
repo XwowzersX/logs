@@ -1,1 +1,35 @@
+name: Daily Log Upload
+
+on:
+  schedule:
+    - cron: '45 23 * * *' # 4:45 PM Idaho = 23:45 UTC
+  workflow_dispatch:
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run Python script
+        run: python main.py
+
+      - name: Install gdrive
+        run: |
+          wget -O gdrive.tar.gz https://github.com/prasmussen/gdrive/releases/download/2.1.1/gdrive_2.1.1_linux_amd64.tar.gz
+          tar -xzf gdrive.tar.gz
+          chmod +x gdrive
+
+      - name: Upload to Google Drive
+        run: ./gdrive upload --parent 1zUTic9O4yp1ZGWwwv75z60yApb___QoO latest_*.log
+        env:
+          GDRIVE_TOKEN_PATH: token_v2.json
 
