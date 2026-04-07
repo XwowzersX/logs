@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aperture Science - Portal Test Chambers</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Title Screen -->
+  <div id="title-screen">
+    <div id="title-container">
+      <div id="aperture-logo">
+        <svg viewBox="0 0 100 100" width="120" height="120">
+          <circle cx="50" cy="50" r="48" fill="none" stroke="#f0f0f0" stroke-width="2"/>
+          <path d="M50 2 L62 38 L50 30 Z" fill="#f0f0f0"/>
+          <path d="M50 2 L38 38 L50 30 Z" fill="#c0c0c0"/>
+          <path d="M93.3 27 L57 39 L62 27 Z" fill="#f0f0f0"/>
+          <path d="M93.3 27 L62 38 L68 30 Z" fill="#c0c0c0"/>
+          <path d="M93.3 73 L57 61 L68 70 Z" fill="#f0f0f0"/>
+          <path d="M93.3 73 L62 62 L68 55 Z" fill="#c0c0c0"/>
+          <path d="M50 98 L38 62 L50 70 Z" fill="#f0f0f0"/>
+          <path d="M50 98 L62 62 L50 70 Z" fill="#c0c0c0"/>
+          <path d="M6.7 73 L43 61 L32 70 Z" fill="#f0f0f0"/>
+          <path d="M6.7 73 L38 62 L32 55 Z" fill="#c0c0c0"/>
+          <path d="M6.7 27 L43 39 L32 30 Z" fill="#f0f0f0"/>
+          <path d="M6.7 27 L38 38 L32 27 Z" fill="#c0c0c0"/>
+        </svg>
+      </div>
+      <h1>APERTURE SCIENCE</h1>
+      <h2>ENRICHMENT CENTER</h2>
+      <div id="subtitle">Portal Device Testing Initiative</div>
+      <div id="start-prompt">Press ENTER or click to begin testing</div>
+      <div id="controls-info">
+        <p>WASD / Arrow Keys - Move &amp; Jump</p>
+        <p>Left Click - Fire Blue Portal</p>
+        <p>Right Click - Fire Orange Portal</p>
+        <p>R - Reset Portals</p>
+      </div>
+      <div id="disclaimer">
+        <em>"The Enrichment Center reminds you that the Weighted Companion Cube cannot speak."</em>
+      </div>
+    </div>
+  </div>
+
+  <!-- HUD -->
+  <div id="hud" style="display:none;">
+    <div id="hud-left">
+      <div id="crosshair-indicator">
+        <span id="portal-blue-ind" class="ind-empty">&#9679;</span>
+        <span id="portal-orange-ind" class="ind-empty">&#9679;</span>
+      </div>
+      <div id="chamber-label">Test Chamber <span id="chamber-num">00</span></div>
+    </div>
+    <div id="hud-right">
+      <div id="glados-text"></div>
+    </div>
+  </div>
+
+  <!-- Game Canvas -->
+  <canvas id="game-canvas"></canvas>
+
+  <!-- Level Transition -->
+  <div id="level-transition" style="display:none;">
+    <div id="transition-text"></div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
