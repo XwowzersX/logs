@@ -4,38 +4,118 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Aperture Science - Portal Test Chambers</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      overflow: hidden;
+      font-family: 'Courier New', monospace;
+      color: #e0e0e0;
+      width: 100vw;
+      height: 100vh;
+    }
+    canvas { display: block; }
+
+    #title-screen {
+      position: fixed; top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: radial-gradient(ellipse at center, #1a1a1a 0%, #0a0a0a 70%, #000 100%);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 100; cursor: pointer;
+    }
+    #title-container { text-align: center; animation: fadeIn 1.5s ease-in; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+    #aperture-logo { margin-bottom: 30px; animation: slowSpin 20s linear infinite; }
+    @keyframes slowSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    #title-container h1 { font-size: 48px; letter-spacing: 12px; color: #f0f0f0; margin-bottom: 5px; font-weight: 300; }
+    #title-container h2 { font-size: 18px; letter-spacing: 8px; color: #888; margin-bottom: 40px; font-weight: 300; }
+    #subtitle { font-size: 14px; color: #666; letter-spacing: 3px; margin-bottom: 60px; text-transform: uppercase; }
+    #start-prompt { font-size: 16px; color: #ff8c00; animation: pulse 2s ease-in-out infinite; margin-bottom: 40px; }
+    @keyframes pulse { 0%,100% { opacity:0.4; } 50% { opacity:1; } }
+    #controls-info { font-size: 12px; color: #555; line-height: 2; margin-bottom: 40px; }
+    #disclaimer { font-size: 11px; color: #333; max-width: 400px; margin: 0 auto; }
+
+    #hud {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 50; display: none;
+    }
+    #crosshair {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 30px; height: 30px;
+    }
+    #crosshair::before, #crosshair::after {
+      content: ''; position: absolute; background: rgba(255,255,255,0.6);
+    }
+    #crosshair::before { width: 2px; height: 16px; top: 7px; left: 14px; }
+    #crosshair::after { width: 16px; height: 2px; top: 14px; left: 7px; }
+    .crosshair-dot {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,0.8);
+    }
+    #portal-indicators {
+      position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 20px; align-items: center;
+    }
+    .portal-ind {
+      width: 16px; height: 40px; border-radius: 8px; border: 2px solid;
+      opacity: 0.3; transition: all 0.3s;
+    }
+    .portal-ind.blue { border-color: #0077ff; }
+    .portal-ind.orange { border-color: #ff8c00; }
+    .portal-ind.active { opacity: 1; box-shadow: 0 0 15px currentColor; }
+    .portal-ind.blue.active { background: rgba(0,119,255,0.3); color: #0077ff; }
+    .portal-ind.orange.active { background: rgba(255,140,0,0.3); color: #ff8c00; }
+    #chamber-label {
+      position: absolute; top: 20px; left: 25px;
+      font-size: 14px; color: #888; letter-spacing: 2px; text-transform: uppercase;
+    }
+    #glados-text {
+      position: absolute; top: 20px; right: 25px;
+      max-width: 45%; text-align: right;
+      font-size: 13px; color: #ffcc00; line-height: 1.6;
+      text-shadow: 0 0 8px rgba(255,204,0,0.3);
+    }
+    #interact-prompt {
+      position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%);
+      font-size: 14px; color: #aaa; display: none;
+      text-shadow: 0 0 10px rgba(255,255,255,0.3);
+    }
+    #level-transition {
+      position: fixed; top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: #000; display: none;
+      align-items: center; justify-content: center; z-index: 200;
+    }
+    #transition-text {
+      font-size: 24px; color: #888; letter-spacing: 6px;
+      text-transform: uppercase; animation: fadeIn 1s ease-in;
+    }
+  </style>
 </head>
 <body>
-  <!-- Title Screen -->
   <div id="title-screen">
     <div id="title-container">
       <div id="aperture-logo">
         <svg viewBox="0 0 100 100" width="120" height="120">
           <circle cx="50" cy="50" r="48" fill="none" stroke="#f0f0f0" stroke-width="2"/>
-          <path d="M50 2 L62 38 L50 30 Z" fill="#f0f0f0"/>
-          <path d="M50 2 L38 38 L50 30 Z" fill="#c0c0c0"/>
-          <path d="M93.3 27 L57 39 L62 27 Z" fill="#f0f0f0"/>
-          <path d="M93.3 27 L62 38 L68 30 Z" fill="#c0c0c0"/>
-          <path d="M93.3 73 L57 61 L68 70 Z" fill="#f0f0f0"/>
-          <path d="M93.3 73 L62 62 L68 55 Z" fill="#c0c0c0"/>
-          <path d="M50 98 L38 62 L50 70 Z" fill="#f0f0f0"/>
-          <path d="M50 98 L62 62 L50 70 Z" fill="#c0c0c0"/>
-          <path d="M6.7 73 L43 61 L32 70 Z" fill="#f0f0f0"/>
-          <path d="M6.7 73 L38 62 L32 55 Z" fill="#c0c0c0"/>
-          <path d="M6.7 27 L43 39 L32 30 Z" fill="#f0f0f0"/>
-          <path d="M6.7 27 L38 38 L32 27 Z" fill="#c0c0c0"/>
+          <path d="M50 2 L62 38 L50 30 Z" fill="#f0f0f0"/><path d="M50 2 L38 38 L50 30 Z" fill="#c0c0c0"/>
+          <path d="M93.3 27 L57 39 L62 27 Z" fill="#f0f0f0"/><path d="M93.3 27 L62 38 L68 30 Z" fill="#c0c0c0"/>
+          <path d="M93.3 73 L57 61 L68 70 Z" fill="#f0f0f0"/><path d="M93.3 73 L62 62 L68 55 Z" fill="#c0c0c0"/>
+          <path d="M50 98 L38 62 L50 70 Z" fill="#f0f0f0"/><path d="M50 98 L62 62 L50 70 Z" fill="#c0c0c0"/>
+          <path d="M6.7 73 L43 61 L32 70 Z" fill="#f0f0f0"/><path d="M6.7 73 L38 62 L32 55 Z" fill="#c0c0c0"/>
+          <path d="M6.7 27 L43 39 L32 30 Z" fill="#f0f0f0"/><path d="M6.7 27 L38 38 L32 27 Z" fill="#c0c0c0"/>
         </svg>
       </div>
       <h1>APERTURE SCIENCE</h1>
       <h2>ENRICHMENT CENTER</h2>
       <div id="subtitle">Portal Device Testing Initiative</div>
-      <div id="start-prompt">Press ENTER or click to begin testing</div>
+      <div id="start-prompt">Click to begin testing</div>
       <div id="controls-info">
-        <p>WASD / Arrow Keys - Move &amp; Jump</p>
+        <p>WASD - Move | SPACE - Jump</p>
+        <p>Mouse - Look Around</p>
         <p>Left Click - Fire Blue Portal</p>
         <p>Right Click - Fire Orange Portal</p>
-        <p>E - Pick Up / Drop Cube</p>
+        <p>E - Interact / Pick Up Cube</p>
         <p>R - Reset Portals</p>
       </div>
       <div id="disclaimer">
@@ -44,28 +124,29 @@
     </div>
   </div>
 
-  <!-- HUD -->
-  <div id="hud" style="display:none;">
-    <div id="hud-left">
-      <div id="crosshair-indicator">
-        <span id="portal-blue-ind" class="ind-empty">&#9679;</span>
-        <span id="portal-orange-ind" class="ind-empty">&#9679;</span>
-      </div>
-      <div id="chamber-label">Test Chamber <span id="chamber-num">00</span></div>
+  <div id="hud">
+    <div id="crosshair"><div class="crosshair-dot"></div></div>
+    <div id="portal-indicators">
+      <div class="portal-ind blue" id="ind-blue"></div>
+      <div class="portal-ind orange" id="ind-orange"></div>
     </div>
-    <div id="hud-right">
-      <div id="glados-text"></div>
-    </div>
+    <div id="chamber-label">Test Chamber <span id="chamber-num">00</span></div>
+    <div id="glados-text"></div>
+    <div id="interact-prompt">Press E to interact</div>
   </div>
 
-  <!-- Game Canvas -->
-  <canvas id="game-canvas"></canvas>
-
-  <!-- Level Transition -->
-  <div id="level-transition" style="display:none;">
+  <div id="level-transition">
     <div id="transition-text"></div>
   </div>
 
-  <script src="game.js"></script>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module" src="game3d.js"></script>
 </body>
 </html>
